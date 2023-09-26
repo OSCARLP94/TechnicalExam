@@ -1,8 +1,8 @@
-﻿// Importa las funciones necesarias desde los SDKs que necesitas
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
 
-// Tu configuración de Firebase
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyBa2cFUL5oGDCgCIlsKMnIiIhPVq3hAZvI",
     authDomain: "technicalexam-db7ca.firebaseapp.com",
@@ -13,9 +13,22 @@ const firebaseConfig = {
     measurementId: "G-Q4YFVR5QDP"
 };
 
-// Inicializa Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-// Exporta las variables que necesitas usar en otros scripts si es necesario
-export { app, analytics };
+function registerEvent(typeAction) {
+    analytics.logEvent('user_log', {
+        typeAction: typeAction
+    });
+
+    $("#DeleteForm").submit();
+}
+
+// Adjunta manejadores de eventos usando jQuery
+$(document).ready(function () {
+    $("#btnDelete").on("click", function () {
+        var actionName = "@Model.Action.ActionName";
+        registerEvent(actionName);
+    });
+});
