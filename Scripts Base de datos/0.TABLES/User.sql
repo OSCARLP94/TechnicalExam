@@ -1,0 +1,27 @@
+-------------------------------------------------
+--AUTOR:	OSCAR LOZANO
+--FECHA:	
+--FUNCION:	CREA TABLA User
+--CIA:		TECHNICAL EXAM
+-------------------------------------------------
+IF EXISTS(SELECT *FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='User')
+BEGIN
+	DROP TABLE dbo.[User]
+	PRINT 'DROPED TABLE User...'
+END
+GO
+
+CREATE TABLE dbo.[User](
+		Id VARCHAR(20) PRIMARY KEY,
+		[Name] VARCHAR(100) NOT NULL,
+		BirthDate DATETIME NOT NULL,
+		Sex VARCHAR(1) NOT NULL
+	)
+GO
+
+CREATE INDEX IX_User_Name ON dbo.[User]([Name])
+GO
+
+IF EXISTS(SELECT *FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='User')
+	PRINT 'CREATED TABLE User...'
+GO

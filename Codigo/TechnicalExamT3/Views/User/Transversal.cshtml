@@ -1,0 +1,102 @@
+﻿@using TechnicalExamT3.ProjectResources;
+@model UserCompositeViewModel
+
+@if (ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success">
+        @ViewBag.SuccessMessage
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @Html.Raw(ViewBag.ErrorMessage)
+    </div>
+}
+
+<h2>Usuario gestiona</h2>
+
+<p>Acción: @Model.Action.ActionName</p>
+
+@if (Model.Action.ActionName == Resource.AddAction)
+{
+    <!-- Contenido específico para la acción de Adicionar -->
+
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(model => model.Action.ActionName)
+        @Html.HiddenFor(model => model.Action.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.User.Name)
+            @Html.TextBoxFor(model => model.User.Name, new { @class = "form-control", required = "required" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.User.BirthDate)
+            @Html.TextBoxFor(model => model.User.BirthDate, new { @class = "form-control", type = "date", required = "required" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.User.Sex)
+            @Html.DropDownListFor(model => model.User.Sex, new SelectList(new[]
+        {
+        new SelectListItem { Value = "F", Text = Resource.FemaleLabel },
+        new SelectListItem { Value = "M", Text = Resource.MaleLabel },
+        }, "Value", "Text"), "Select a sex", new { @class = "form-control", required = "required" })
+        </div>
+        <button type="submit" class="btn btn-primary">@Resource.SaveLabel</button>
+    </form>
+}
+else if (Model.Action.ActionName == Resource.EditAction)
+{
+    <!-- Contenido específico para la acción de Editar -->
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(model => model.Action.ActionName)
+        @Html.HiddenFor(model => model.Action.Id)
+        @Html.HiddenFor(model => model.User.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.User.Name)
+            @Html.TextBoxFor(model => model.User.Name, new { @class = "form-control", required = "required" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.User.BirthDate)
+            @Html.TextBoxFor(model => model.User.BirthDate, "{0:yyyy-MM-dd}" ,new { @class = "form-control", type = "date", required = "required" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.User.Sex)
+            @Html.DropDownListFor(model => model.User.Sex, new SelectList(new[]
+        {
+        new SelectListItem { Value = "F", Text = Resource.FemaleLabel },
+        new SelectListItem { Value = "M", Text = Resource.MaleLabel },
+        }, "Value", "Text"), "Select a sex", new { @class = "form-control", required = "required" })
+        </div>
+
+       
+
+        <button type="submit" class="btn btn-primary">@Resource.EditLabel</button>
+    </form>
+}
+else if (Model.Action.ActionName == Resource.DeleteAction)
+{
+    <!-- Contenido específico para la acción de Eliminar -->
+    <p><strong>@Resource.NameLabel:</strong> @Model.User.Name</p>
+    <p><strong>@Resource.BirthDateLabel:</strong> @Model.User.BirthDate.ToString("dd/MM/yyyy")</p>
+    <p><strong>@Resource.SexLabel:</strong> @Model.User.Sex</p>
+
+    <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
+
+
+        @Html.HiddenFor(model => model.Action.ActionName)
+        @Html.HiddenFor(model => model.Action.Id)
+        @Html.HiddenFor(model => model.User.Id)
+        @Html.HiddenFor(model => model.User.Name)
+        @Html.HiddenFor(model => model.User.BirthDate)
+        @Html.HiddenFor(model => model.User.Sex)
+
+        <button type="submit" class="btn btn-danger" id="btnEliminar">Eliminar Usuario</button>
+    </form>
+}

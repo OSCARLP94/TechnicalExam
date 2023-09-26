@@ -1,0 +1,69 @@
+﻿@using TechnicalExamT3.ProjectResources;
+@using X.PagedList.Mvc.Core;
+
+@model X.PagedList.IPagedList<UserViewModel> //modelo para lista
+
+@if (ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success">
+        @ViewBag.SuccessMessage
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @Html.Raw(ViewBag.ErrorMessage)
+    </div>
+}
+
+<h2>Usuarios</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Botón para agregar -->
+            <a href="@Url.Action("Transversal", "User", new{ actionName = Resource.AddAction})" class="btn btn-success">
+                <i class="fa fa-plus"></i> @Resource.AddLabel
+            </a>
+        </div>
+        <div class="col-md-6">
+            <!-- Botón para descargar Excel -->
+            <a href="@Url.Action("DownloadExcel", "User")" class="btn btn-success">
+                <i class="fa fa-download"></i> @Resource.DownloadExcelLabel
+            </a>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Resource.NameLabel</th>
+            <th>@Resource.BirthDateLabel</th>
+            <th>@Resource.SexLabel</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Name</td>
+                <td>@user.BirthDate.ToString("dd/MM/yyyy")</td>
+                <td>@user.Sex</td>
+                <td>
+                    <a href="@Url.Action("Transversal", "User", new { actionName = Resource.EditAction, id = user.Id})" class="btn btn-warning">
+                        <i class="fa fa-pencil"></i> @Resource.EditLabel
+                    </a>
+
+                    <a href="@Url.Action("Transversal", "User", new { actionName = Resource.DeleteAction, id = user.Id })" class="btn btn-danger">
+                        <i class="fa fa-trash"></i> @Resource.DeleteLabel
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pagination-container">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { currentPage = page }), PagedListRenderOptions.MinimalWithItemCountText)
+</div>
