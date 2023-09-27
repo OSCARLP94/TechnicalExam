@@ -3,7 +3,6 @@ using Business.DataAccess.Factory;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.IO;
 using TechnicalExamT3.Mappers;
 using TechnicalExamT3.Models;
 using UserServiceWCF;
@@ -44,7 +43,10 @@ namespace TechnicalExamT3.Controllers
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Error");
+                List<UserViewModel> usersView = new List<UserViewModel>();
+                ViewBag.ErrorMessage = ex.Message;
+
+                return View(usersView.ToPagedList(1, pageSize ?? default(int)));
             }      
         }
 
