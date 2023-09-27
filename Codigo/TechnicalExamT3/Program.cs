@@ -1,10 +1,8 @@
-using Business.BusinessLogic;
 using Business.DataAccess.ContextDB;
 using Business.DataAccess.Factory;
 using Business.DataAccess.Mappers;
-using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
 using Microsoft.EntityFrameworkCore;
+using UserServiceWCF;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 #region Inyeccion dependencias propias
+#region Database
 //Mappers de BD
 builder.Services.AddSingleton<IEntityTypeMap, UserMapper>();
 
@@ -28,13 +27,10 @@ builder.Services.AddSingleton(dbContextOptions);
 builder.Services.AddSingleton<TechnicalExamContextOptions>();
 builder.Services.AddSingleton<IContextDBFactory, ContextDBFactory>();
 builder.Services.AddSingleton<TechnicalExamDBContext>();
+#endregion
 
-// Configurar Firebase
-//var firebaseCredentials = GoogleCredential.FromFile("ruta-a-tu-archivo-de-credenciales.json");
-//FirebaseApp.Create(new AppOptions
-//{
-//    Credential = firebaseCredentials,
-//});
+//Servicio WCF
+builder.Services.AddSingleton<IUserService, UserServiceClient>();
 
 #endregion
 

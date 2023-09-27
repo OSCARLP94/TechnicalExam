@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using TechnicalExamT3.Mappers;
 using TechnicalExamT3.Models;
+using UserServiceWCF;
 using X.PagedList;
 
 namespace TechnicalExamT3.Controllers
@@ -13,10 +14,12 @@ namespace TechnicalExamT3.Controllers
     public class UserController : Controller
     {
         private readonly UserBL _userBL;
+        private readonly IUserService _userServiceWCF;
 
-        public UserController(IContextDBFactory contextDBFactory) 
+        public UserController(IContextDBFactory contextDBFactory, IUserService userServiceWCF) 
         { 
             _userBL = new UserBL(contextDBFactory);
+            _userServiceWCF = userServiceWCF;
         }
 
 
@@ -25,13 +28,15 @@ namespace TechnicalExamT3.Controllers
         {
             try
             {
-                var users = await _userBL.GetAll();
+                var users = await _userServiceWCF.GetAllAsync();
+                //var users = await _userBL.GetAll();
 
                 //aplicamos paginacion
                 int pageNumber = (currentPage ?? 1);
 
                 //convertir a modelos vista
-                List<UserViewModel> usersView = UserMapper.FromUsersToViewModels(users)?.ToList();
+                List<UserViewModel> usersView = UserMapper.FromUsersDTOToUsersViewModel(users)?.ToList();
+                //List<UserViewModel> usersView = UserMapper.FromUsersToViewModels(users)?.ToList();
 
                 var pagedList = usersView.ToPagedList(pageNumber, pageSize ?? default(int));
 
@@ -66,7 +71,8 @@ namespace TechnicalExamT3.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var resp = await _userBL.Register(UserMapper.FromUserViewModelToUser(userModel.User));
+                    var resp = await _userServiceWCF.RegisterAsync(UserMapper.FromUserViewModelToUserDTO(userModel.User));
+                    //var resp = await _userBL.Register(UserMapper.FromUserViewModelToUser(userModel.User));
 
                     ViewBag.SuccessMessage = ProjectResources.Resource.UserAddedSuccess;
 
@@ -99,7 +105,9 @@ namespace TechnicalExamT3.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var resp = await _userBL.Update(UserMapper.FromUserViewModelToUser(userModel.User));
+                    var resp = await _userServiceWCF.UpdateAsync(UserMapper.FromUserViewModelToUserDTO(userModel.User));
+                    //var resp = await _userBL.Update(UserMapper.FromUserViewModelToUser(userModel.User));
+
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -128,7 +136,9 @@ namespace TechnicalExamT3.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var resp = await _userBL.Delete(userModel.User.Id);
+                    var resp = await _userServiceWCF.DeleteAsync(userModel.User.Id);
+                    //var resp = await _userBL.Delete(userModel.User.Id);
+
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -152,7 +162,8 @@ namespace TechnicalExamT3.Controllers
         {
             try
             {
-                var users = await _userBL.GetAll();
+                var users = await _userServiceWCF.GetAllAsync();
+                //var users = await _userBL.GetAll();
 
                 #region generacion excel
                 using (var workbook = new XLWorkbook())
