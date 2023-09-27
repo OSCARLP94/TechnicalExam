@@ -12,13 +12,16 @@ namespace TechnicalExamT3.Controllers
 {
     public class UserController : Controller
     {
+        private readonly bool _useWFCLayer;
         private readonly UserBL _userBL;
         private readonly IUserService _userServiceWCF;
 
-        public UserController(IContextDBFactory contextDBFactory, IUserService userServiceWCF) 
+        public UserController(IConfiguration configuration, IContextDBFactory contextDBFactory, IUserService userServiceWCF) 
         { 
             _userBL = new UserBL(contextDBFactory);
             _userServiceWCF = userServiceWCF;
+
+            _useWFCLayer = configuration.GetValue<bool>("UseWCFLayer");
         }
 
 
@@ -27,16 +30,21 @@ namespace TechnicalExamT3.Controllers
         {
             try
             {
-                var users = await _userServiceWCF.GetAllAsync();
-                //var users = await _userBL.GetAll();
+                List<UserViewModel> usersView = new();
+
+                if (_useWFCLayer)
+                {
+                    var users = await _userServiceWCF.GetAllAsync();
+                    usersView = UserMapper.FromUsersDTOToUsersViewModel(users)?.ToList();
+                }
+                else
+                {
+                    var users = await _userBL.GetAll();
+                    usersView = UserMapper.FromUsersToViewModels(users)?.ToList();
+                }
 
                 //aplicamos paginacion
                 int pageNumber = (currentPage ?? 1);
-
-                //convertir a modelos vista
-                List<UserViewModel> usersView = UserMapper.FromUsersDTOToUsersViewModel(users)?.ToList();
-                //List<UserViewModel> usersView = UserMapper.FromUsersToViewModels(users)?.ToList();
-
                 var pagedList = usersView.ToPagedList(pageNumber, pageSize ?? default(int));
 
                 return View(pagedList);
@@ -73,8 +81,10 @@ namespace TechnicalExamT3.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var resp = await _userServiceWCF.RegisterAsync(UserMapper.FromUserViewModelToUserDTO(userModel.User));
-                    //var resp = await _userBL.Register(UserMapper.FromUserViewModelToUser(userModel.User));
+                    if (_useWFCLayer)
+                        await _userServiceWCF.RegisterAsync(UserMapper.FromUserViewModelToUserDTO(userModel.User));
+                    else
+                        await _userBL.Register(UserMapper.FromUserViewModelToUser(userModel.User));
 
                     ViewBag.SuccessMessage = ProjectResources.Resource.UserAddedSuccess;
 
@@ -107,8 +117,10 @@ namespace TechnicalExamT3.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var resp = await _userServiceWCF.UpdateAsync(UserMapper.FromUserViewModelToUserDTO(userModel.User));
-                    //var resp = await _userBL.Update(UserMapper.FromUserViewModelToUser(userModel.User));
+                    if (_useWFCLayer)
+                        await _userServiceWCF.UpdateAsync(UserMapper.FromUserViewModelToUserDTO(userModel.User));
+                    else
+                        await _userBL.Update(UserMapper.FromUserViewModelToUser(userModel.User));
 
                     return RedirectToAction(nameof(Index));
                 }
@@ -138,8 +150,10 @@ namespace TechnicalExamT3.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var resp = await _userServiceWCF.DeleteAsync(userModel.User.Id);
-                    //var resp = await _userBL.Delete(userModel.User.Id);
+                    if (_useWFCLayer) 
+                        await _userServiceWCF.DeleteAsync(userModel.User.Id);
+                    else
+                        await _userBL.Delete(userModel.User.Id);
 
                     return RedirectToAction(nameof(Index));
                 }
@@ -164,8 +178,11 @@ namespace TechnicalExamT3.Controllers
         {
             try
             {
-                var users = await _userServiceWCF.GetAllAsync();
-                //var users = await _userBL.GetAll();
+                List<UserViewModel> users = new();
+                if (_useWFCLayer)
+                     users = UserMapper.FromUsersDTOToUsersViewModel(await _userServiceWCF.GetAllAsync())?.ToList();
+                else
+                     users = UserMapper.FromUsersToViewModels(await _userBL.GetAll())?.ToList();
 
                 #region generacion excel
                 using (var workbook = new XLWorkbook())
