@@ -1,11 +1,8 @@
 ﻿using BusinessWCF.DataAccess.ContextDB;
-using BusinessWCF.DataAccess.Factory;
-using BusinessWCF.DataAccess.Mappers;
 using BusinessWCF.DTOs;
 using BusinessWCF.Entities;
 using BusinessWCF.Mappers;
 using BusinessWCF.Repository;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -24,23 +21,8 @@ namespace BusinessWCF.BusinessLogic
         public UserService()
         {
             #region Hago instancia de BD aqui mienstras averiguo una mejor forma
-            List<IEntityTypeMap> entityMappers = new List<IEntityTypeMap>
-            {
-                new UserMapper()
-            };
-
-            var userMapper = new UserMapper();
-            var dbContextOptions = new DbContextOptionsBuilder<TechnicalExamDBContext>()
-            .UseSqlServer(ConfigurationManager.ConnectionStrings["TechnicalDBConnection"].ConnectionString, sqlServerOptionsAction =>
-            {
-                // Habilitar la resiliencia a errores transitorios
-                sqlServerOptionsAction.EnableRetryOnFailure();
-            })
-            .Options;
-
-            var techinicaDbContextOptions = new TechnicalExamContextOptions(dbContextOptions, entityMappers);
-            var contextDbFactory = new ContextDBFactory(techinicaDbContextOptions);
-            _userRepo = new Repository<User>(contextDbFactory);
+            var contextDb = new TechnicalExamDBContext(ConfigurationManager.ConnectionStrings["TechnicalDBConnection"].ConnectionString);
+            _userRepo = new Repository<User>(contextDb);
             #endregion
         }
         public async Task<bool> Delete(string id)

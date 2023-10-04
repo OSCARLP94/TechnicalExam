@@ -1,5 +1,4 @@
-﻿using BusinessWCF.DataAccess.Factory;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Data;
 using System.Diagnostics;
 using BusinessWCF.DataAccess.ContextDB;
@@ -7,30 +6,28 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BusinessWCF.Repository
 {
     public class Repository<TEntity> : IRepository<TEntity>
       where TEntity : class
     {
-        private readonly IContextDBFactory dbContextFactory;
+        private readonly TechnicalExamDBContext _dbContext;
 
-        public Repository(IContextDBFactory dbContextFactory)
+        public Repository(TechnicalExamDBContext dbContext)
         {
-            this.dbContextFactory = dbContextFactory;
+            this._dbContext = dbContext;
         }
 
       
         public async Task<TEntity> Get(object id)
         {
-            if (dbContextFactory != null)
+            if (_dbContext != null)
             {
                 try
                 {
-                    using (var context = dbContextFactory.Process())
-                    {
-                        return await context.DbSet<TEntity>().FindAsync(id);
-                    }
+                    return await _dbContext.FindAsync<TEntity>(id);
                 }
                 catch (Exception ex)
                 {
@@ -48,17 +45,10 @@ namespace BusinessWCF.Repository
         {
             try
             {
-                if (dbContextFactory != null)
-                {
-                    using (var context = dbContextFactory.Process())
-                    {
-                        return await context.DbSet<TEntity>().ToListAsync();
-                    }
-                }
+                if (_dbContext != null)
+                    return _dbContext.Set<TEntity>().ToList();
                 else
-                {
                     throw new ArgumentException("Error. Context DB cannot be null.");
-                }
             }
             catch (Exception ex)
             {
@@ -68,17 +58,12 @@ namespace BusinessWCF.Repository
 
         public async Task<bool> Create(TEntity entity)
         {
-            bool result = false;
             try
             {
-                if (dbContextFactory != null && entity != null)
+                if (_dbContext != null && entity != null)
                 {
-                    using (var context = this.dbContextFactory.Process())
-                    {
-                        await context.DbSet<TEntity>().AddAsync(entity);
-                        await context.SaveChangesAsync();
-                    }
-                    result = true;
+                    _dbContext.Set<TEntity>().Add(entity);
+                    return true;
                 }
                 else
                     throw new ArgumentException("Error. Context DB or entity cannot be null.");
@@ -87,7 +72,6 @@ namespace BusinessWCF.Repository
             {
                 throw;
             }
-            return result;
         }
 
 
@@ -95,14 +79,9 @@ namespace BusinessWCF.Repository
         {
             try
             {
-                if (dbContextFactory != null && entity != null)
+                if (_dbContext != null && entity != null)
                 {
-                    //this.EntitySet.Attach(entity);                  
-                    using (var context = this.dbContextFactory.Process())
-                    {
-                        context.DbSet<TEntity>().Update(entity);
-                        await context.SaveChangesAsync();
-                    }
+                    _dbContext.Set<TEntity>().Update(entity);
                     return entity;
                 }
                 else
@@ -122,14 +101,10 @@ namespace BusinessWCF.Repository
         {
             try
             {
-                if (dbContextFactory != null && entity != null)
+                if (_dbContext != null && entity != null)
                 {
-                    using (var context = this.dbContextFactory.Process())
-                    {
-                        context.Remove(entity);
-                        await context.SaveChangesAsync();
-                        return true;
-                    }
+                    _dbContext.Set<TEntity>().Remove(entity);
+                    return true;
                 }
                 else
                 {
@@ -140,7 +115,6 @@ namespace BusinessWCF.Repository
             {
                 throw;
             }
-            return false;
         }
 
         public async Task<int> ExecuteSP(DbCommand cmd)
@@ -168,7 +142,7 @@ namespace BusinessWCF.Repository
 
         public DbCommand GetDbCommand()
         {
-           return this.dbContextFactory.Process().Database.GetDbConnection().CreateCommand();
+           return this._dbContext.Database.GetDbConnection().CreateCommand();
         }
     }
 
