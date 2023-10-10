@@ -1,0 +1,82 @@
+﻿@page "/transversal/{actionname}/{userid?}"
+@using TechnicalExamBlazor.ProjectResources;
+@inherits TransversalBase
+
+<PageTitle>@Resource.UserManageLabel</PageTitle>
+
+<h3>@Resource.UserManageLabel</h3>
+
+<p>@ActionName</p>
+
+@if (ActionName == Resource.AddAction)
+{
+    <!-- Contenido específico para la acción de Adicionar -->
+
+    <EditForm Model="@CurrentUser" OnValidSubmit="@HandleAddSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <p>
+            <label for="Name">@Resource.NameLabel:</label>
+            <InputText @bind-Value="CurrentUser.Name"/>
+            <ValidationMessage For="() => CurrentUser.Name" />
+        </p>
+        <p>
+            <label for="BirthDate">@Resource.BirthDateLabel:</label>
+            <InputDate @bind-Value="CurrentUser.BirthDate"/>
+            <ValidationMessage For="() => CurrentUser.BirthDate" />
+        </p>
+        <p>
+            <label for="Sex">@Resource.SexLabel:</label>
+            <InputSelect id="sex" @bind-Value="CurrentUser.Sex">
+                <option value="">Seleccione...</option>
+                <option value="F">@Resource.FemaleLabel</option>
+                <option value="M">@Resource.MaleLabel</option>
+            </InputSelect>
+        </p>
+
+        <button type="submit" class="btn btn-primary">@Resource.SaveLabel</button>
+    </EditForm>
+}
+else if (ActionName == Resource.EditAction)
+{
+    <!-- Contenido específico para la acción de Editar -->
+    <EditForm Model="@CurrentUser" OnValidSubmit="@HandleEditSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <p>
+            <label for="Name">@Resource.NameLabel:</label>
+            <InputText @bind-Value="CurrentUser.Name" />
+            <ValidationMessage For="() => CurrentUser.Name" />
+        </p>
+        <p>
+            <label for="BirthDate">@Resource.BirthDateLabel:</label>
+            <InputDate @bind-Value="CurrentUser.BirthDate" />
+            <ValidationMessage For="() => CurrentUser.BirthDate" />
+        </p>
+        <p>
+            <label for="Sex">@Resource.SexLabel:</label>
+            <InputSelect id="sex" @bind-Value="CurrentUser.Sex">
+                <option value="">Seleccione...</option>
+                <option value="F">@Resource.FemaleLabel</option>
+                <option value="M">@Resource.MaleLabel</option>
+            </InputSelect>
+        </p>
+
+        <button type="submit" class="btn btn-primary">@Resource.EditLabel</button>
+    </EditForm>
+}
+else if (ActionName == Resource.DeleteAction)
+{
+    <!-- Contenido específico para la acción de Eliminar -->
+    <p><strong>@Resource.NameLabel:</strong> @CurrentUser.Name</p>
+    <p><strong>@Resource.BirthDateLabel:</strong> @CurrentUser.BirthDate.ToString("dd/MM/yyyy")</p>
+    <p><strong>@Resource.SexLabel:</strong> @CurrentUser.Sex</p>
+
+    <button type="submit" class="btn btn-danger" @onclick="()=> HandleDeleteSubmit()">@Resource.DeleteLabel</button>
+}
+
+@code {
+
+}

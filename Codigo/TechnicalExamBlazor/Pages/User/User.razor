@@ -1,0 +1,76 @@
+﻿@page "/user"
+@using TechnicalExamBlazor.ProjectResources;
+@inherits UserBase
+
+<PageTitle>@Resource.UserLabel</PageTitle>
+
+@if(showAlert)
+{    
+    <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+        @alertMessage
+    </MudAlert>
+}
+
+<h3>@Resource.UserLabel</h3>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Botón para agregar -->
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary"
+            @onclick="()=> GoToTransversal(Resource.AddAction, null)" >
+                @Resource.AddLabel
+            </MudButton>
+        </div>
+        <div class="col-md-6">
+            <!-- Botón para descargar Excel -->
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.CloudDownload" Color="Color.Tertiary"
+            @onclick="()=> DownloadMyExcel()">
+                @Resource.DownloadExcelLabel
+            </MudButton>
+        </div>
+    </div>
+</div>
+
+@if (users == null || !users.Any())
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Resource.NameLabel</th>
+                <th>@Resource.BirthDateLabel</th>
+                <th>@Resource.SexLabel</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Name</td>
+                    <td>@user.BirthDate.ToString("dd/MM/yyyy")</td>
+                    <td>@user.Sex</td>
+                    <td>                        
+                        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Edit" Color="Color.Warning"
+                        @onclick="()=> GoToTransversal(Resource.EditAction, user.Id)">
+                            @Resource.EditLabel
+                        </MudButton>
+
+                        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                        @onclick="()=> GoToTransversal(Resource.DeleteAction, user.Id)">
+                            @Resource.DeleteLabel
+                        </MudButton>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+   
+}
