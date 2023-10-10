@@ -47,6 +47,18 @@ namespace BusinessWCF.BusinessLogic
             }
         }
 
+        public async Task<UserDTO> Get(string id)
+        {
+            try
+            {
+                return UserDataMapper.FromUserToUserDTO(await _userRepo.Get(id));
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public async Task<List<UserDTO>> GetAll()
         {
             try

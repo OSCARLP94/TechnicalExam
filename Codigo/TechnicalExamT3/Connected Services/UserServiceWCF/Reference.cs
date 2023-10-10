@@ -84,6 +84,9 @@ namespace UserServiceWCF
     public interface IUserService
     {
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUserService/Get", ReplyAction="http://tempuri.org/IUserService/GetResponse")]
+        System.Threading.Tasks.Task<UserServiceWCF.UserDTO> GetAsync(string id);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUserService/GetAll", ReplyAction="http://tempuri.org/IUserService/GetAllResponse")]
         System.Threading.Tasks.Task<UserServiceWCF.UserDTO[]> GetAllAsync();
         
@@ -145,6 +148,11 @@ namespace UserServiceWCF
         public UserServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress)
         {
+        }
+        
+        public System.Threading.Tasks.Task<UserServiceWCF.UserDTO> GetAsync(string id)
+        {
+            return base.Channel.GetAsync(id);
         }
         
         public System.Threading.Tasks.Task<UserServiceWCF.UserDTO[]> GetAllAsync()

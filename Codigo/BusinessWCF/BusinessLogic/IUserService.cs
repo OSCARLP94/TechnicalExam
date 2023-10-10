@@ -1,10 +1,7 @@
 ﻿using BusinessWCF.DTOs;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessWCF.BusinessLogic
@@ -13,6 +10,9 @@ namespace BusinessWCF.BusinessLogic
     [ServiceContract]
     public interface IUserService
     {
+        [OperationContract]
+        Task<UserDTO> Get(string id);
+
         /// <summary>
         /// Devuelve lista de usuarios
         /// </summary>
