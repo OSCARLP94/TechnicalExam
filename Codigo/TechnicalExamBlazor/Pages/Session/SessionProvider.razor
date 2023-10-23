@@ -1,0 +1,75 @@
+﻿@using TechnicalExamBlazor.Data.Models;
+@inject ProtectedLocalStorage ProtectedLocalStorage
+
+@if (!isLoading)
+{
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    public MyCachedValue<string>? TokenLog { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private const string userTkConstId = "userTk";
+
+    private bool isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+
+        await DeleteLocalTokenIfExpiry(userTkConstId);
+        //tratamos de obtener del localstorage del navegador el token de usuario
+        var result = await ProtectedLocalStorage.GetAsync<MyCachedValue<string>>(userTkConstId);
+
+        TokenLog = result.Success ? result.Value : null;
+
+        isLoading = false;
+    }
+
+    /// <summary>
+    /// Registra en localstorage token de usuario 
+    /// </summary>
+    /// <param name="userTk"></param>
+    /// <returns></returns>
+    public async Task SaveLocalTokenAsync(string userTk)
+    {
+        await ProtectedLocalStorage.SetAsync(userTkConstId, new MyCachedValue<string> { Value = userTk, Expiry = DateTime.UtcNow.AddHours(1) });
+    }
+
+    /// <summary>
+    /// Elimina un token de localstorage si este expiró
+    /// </summary>
+    /// <param name="userTk"></param>
+    /// <returns></returns>
+    public async Task<bool> DeleteLocalTokenIfExpiry(string userTkId)
+    {
+        var result = await ProtectedLocalStorage.GetAsync<MyCachedValue<string>>(userTkId);
+        if (!result.Success)
+            return false;
+
+        if (result.Value?.Expiry > DateTime.UtcNow)
+            return false;
+
+        await DeleteLocalTokenAsync(userTkId);
+        return true;
+    }
+
+    /// <summary>
+    /// elimina token guardado en localstorage
+    /// </summary>
+    /// <param name="userTk"></param>
+    /// <returns></returns>
+    public async Task DeleteLocalTokenAsync(string userTkId)
+    {
+        await ProtectedLocalStorage.DeleteAsync(userTkId);
+    }
+}

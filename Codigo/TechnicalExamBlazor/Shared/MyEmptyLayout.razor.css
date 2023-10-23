@@ -1,0 +1,15 @@
+﻿.main-log {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Esto es opcional y establece la altura al 100% del viewport para centrar verticalmente */
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+}
+
+.content-log {
+    text-align: center; /* Esto centra el texto horizontalmente dentro del elemento */
+    max-width: 600px; /* Puedes ajustar este valor según el ancho máximo que desees para el contenido */
+    width: 100%;
+    padding: 20px;
+    background-color: #f7f7f7;
+}

@@ -15,7 +15,8 @@ builder.Services.AddSingleton<IUserService, UserServiceClient>();
 #endregion
 
 #region 2- Servicios internos
-builder.Services.AddSingleton<UserService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<SessionService>();
 #endregion
 
 var app = builder.Build();

@@ -1,0 +1,37 @@
+﻿@using System.ComponentModel.DataAnnotations;
+@using TechnicalExamBlazor.ProjectResources;
+@page "/sessionlogin"
+@layout MyEmptyLayout
+@inherits SessionLoginBase
+
+<PageTitle>Session Login</PageTitle>
+
+@if (showAlert)
+{
+    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+        @alertMessage
+    </MudAlert>
+}
+
+<EditForm Model="@sessionModel" OnValidSubmit="LoginSubmit">
+    <DataAnnotationsValidator/>
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="@Resource.UserNameLabel" HelperText="Max. 8 characters"
+                    @bind-Value="sessionModel.UserName" For="@(() => sessionModel.UserName)" />
+                    <MudTextField Label="@Resource.PasswordLabel" HelperText="Choose a strong password" Class="mt-3"
+                    @bind-Value="sessionModel.Password" For="@(() => sessionModel.Password)" InputType="InputType.Password" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">@Resource.LoginLabel</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+ </EditForm>
+
+@code {
+
+}

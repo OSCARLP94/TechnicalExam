@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@using TechnicalExamBlazor.Pages.Session;
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
 
 <PageTitle>TechnicalExamBlazor</PageTitle>
 
@@ -21,3 +23,18 @@
 <MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
+
+@code{
+    [CascadingParameter]
+    private SessionProvider? SessionProvider { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //en caso no haya datos de usuario, enviamos a login
+        if(SessionProvider is not null)
+        {
+            if(string.IsNullOrEmpty(SessionProvider.TokenLog?.Value))
+                NavigationManager.NavigateTo("/sessionlogin");
+        }
+    }
+}

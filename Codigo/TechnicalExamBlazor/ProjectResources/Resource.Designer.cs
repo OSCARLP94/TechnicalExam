@@ -142,6 +142,15 @@ namespace TechnicalExamBlazor.ProjectResources {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Login.
+        /// </summary>
+        public static string LoginLabel {
+            get {
+                return ResourceManager.GetString("LoginLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Masculino.
         /// </summary>
         public static string MaleLabel {
@@ -156,6 +165,15 @@ namespace TechnicalExamBlazor.ProjectResources {
         public static string NameLabel {
             get {
                 return ResourceManager.GetString("NameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Clave.
+        /// </summary>
+        public static string PasswordLabel {
+            get {
+                return ResourceManager.GetString("PasswordLabel", resourceCulture);
             }
         }
         
@@ -192,6 +210,15 @@ namespace TechnicalExamBlazor.ProjectResources {
         public static string UserManageLabel {
             get {
                 return ResourceManager.GetString("UserManageLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Usuario.
+        /// </summary>
+        public static string UserNameLabel {
+            get {
+                return ResourceManager.GetString("UserNameLabel", resourceCulture);
             }
         }
     }
